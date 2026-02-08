@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heermaya | Heritage Jewelry Mastery Quiz</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&f[]=gambetta@400,500,600,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-accent: #d4af37;
+      --primary-hover: #b8962e;
+      --navy-dark: #0f172a;
+      --navy-light: #1e293b;
+    }
+
+    .serif { font-family: 'Gambetta', serif; }
+    .sans { font-family: 'General Sans', sans-serif; }
+
+    body { font-family: 'General Sans', sans-serif; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-question { animation: slideIn 0.4s ease-out forwards; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .dark ::-webkit-scrollbar-thumb { background: #334155; }
+  </style>
+</head>
+<body>
+  <div class="min-h-screen bg-white dark:bg-[#0f172a] text-[#1e293b] dark:text-slate-100 flex flex-col">
+    
+    <!-- Header -->
+    <header class="h-16 px-6 lg:px-12 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-[#0f172a]/80 backdrop-blur-md sticky top-0 z-50">
+      <div class="flex items-center gap-3">
+        <img src="https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/uploads/aeeb9793-9ac4-4789-b0be-b445a4d6a881/1770554777927-b36666ed/Capture.JPG" alt="Heermaya Logo" class="w-8 h-8 rounded-full">
+        <span class="serif text-xl font-semibold tracking-tight text-[#0f172a] dark:text-white">Heermaya</span>
+      </div>
+      
+      <div class="hidden md:block absolute left-1/2 -translate-x-1/2">
+        <h1 class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Heritage Jewelry Mastery Quiz</h1>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div id="timer" class="hidden sm:flex items-center gap-2 px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-xs font-mono font-bold text-[#d4af37]">
+          <iconify-icon icon="lucide:timer" class="text-sm"></iconify-icon>
+          <span>00:00</span>
+        </div>
+        <button id="theme-toggle" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
+          <iconify-icon id="theme-icon" icon="lucide:moon" class="text-xl"></iconify-icon>
+        </button>
+        <div class="h-6 w-[1px] bg-slate-200 dark:bg-slate-800"></div>
+        <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
+          <iconify-icon icon="lucide:user" class="text-lg"></iconify-icon>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex flex-1 overflow-hidden">
+      
+      <!-- Sidebar (Desktop) -->
+      <aside class="w-72 hidden lg:flex flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a]">
+        <div class="p-8 flex flex-col gap-8 h-full overflow-y-auto">
+          
+          <!-- Progress -->
+          <div class="space-y-4">
+            <div class="flex justify-between items-end">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Progress</span>
+              <span id="progress-text" class="text-sm font-bold text-[#d4af37]">0%</span>
+            </div>
+            <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+              <div id="progress-bar" class="h-full bg-[#d4af37] transition-all duration-700 ease-out" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Question Grid -->
+          <div class="flex-1 space-y-4 overflow-hidden">
+            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Question Map</h3>
+            <div id="question-grid" class="grid grid-cols-4 gap-3 overflow-y-auto pr-2"></div>
+          </div>
+
+          <!-- Timer Card -->
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
+            <div class="flex items-center gap-2 mb-2">
+              <iconify-icon icon="lucide:zap" class="text-[#d4af37]"></iconify-icon>
+              <span class="text-xs font-semibold uppercase tracking-widest">Focus Mode</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed italic">
+              Take time with open-ended answers. Depth matters.
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Question Area -->
+      <main class="flex-1 px-6 py-12 lg:px-20 overflow-y-auto flex justify-center">
+        <div id="question-container" class="w-full max-w-2xl animate-question">
+          
+          <div class="flex items-center justify-between gap-4 mb-8">
+            <span id="q-badge" class="inline-flex items-center px-4 py-1 rounded-full text-[10px] font-bold bg-[#d4af37]/10 text-[#d4af37] border border-[#d4af37]/20 uppercase tracking-widest">
+              Question 1 of 10
+            </span>
+            <button id="flag-btn" class="flex items-center gap-2 text-slate-400 hover:text-orange-500 transition-colors text-xs font-semibold uppercase">
+              <iconify-icon id="flag-icon" icon="lucide:flag" class="text-lg"></iconify-icon>
+              <span class="hidden sm:inline">Flag for review</span>
+            </button>
+          </div>
+
+          <!-- Question Text -->
+          <h2 id="q-text" class="serif text-3xl lg:text-4xl leading-tight mb-10 text-slate-900 dark:text-white">
+            Loading question...
+          </h2>
+
+          <!-- Answer Input -->
+          <div class="relative mb-8">
+            <textarea 
+              id="q-answer" 
+              rows="10" 
+              class="w-full p-8 text-lg bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-3xl focus:ring-4 focus:ring-[#d4af37]/10 focus:border-[#d4af37] outline-none transition-all resize-none placeholder:text-slate-300 dark:placeholder:text-slate-700 leading-relaxed"
+              placeholder="Share your insights here..."
+            ></textarea>
+            <div class="absolute bottom-4 right-6 text-[10px] text-slate-400 pointer-events-none uppercase font-bold tracking-widest">
+              Auto-saves on blur
+            </div>
+          </div>
+
+          <!-- Hint Box -->
+          <div class="flex items-start gap-4 p-5 bg-amber-50/50 dark:bg-amber-950/10 border border-amber-100 dark:border-amber-900/20 rounded-2xl">
+            <div class="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+              <iconify-icon icon="lucide:lightbulb" class="text-amber-600 dark:text-amber-500 text-xl"></iconify-icon>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-amber-800 dark:text-amber-500 uppercase tracking-widest mb-1">Heritage Hint</p>
+              <p id="q-hint" class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                Hint goes here...
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="h-20 border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-md sticky bottom-0 z-50">
+      <div class="max-w-[1440px] mx-auto h-full px-6 lg:px-12 flex items-center justify-between gap-4">
+        
+        <button id="prev-btn" class="flex items-center justify-center w-12 h-12 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+          <iconify-icon icon="lucide:chevron-left" class="text-xl"></iconify-icon>
+        </button>
+
+        <div class="flex items-center gap-4 flex-1 justify-end">
+          <button id="next-btn" class="flex items-center gap-2 px-8 h-12 rounded-xl bg-[#d4af37] hover:bg-[#b8962e] text-white font-bold transition-all shadow-lg shadow-[#d4af37]/20 active:scale-95">
+            <span>Next Question</span>
+            <iconify-icon icon="lucide:arrow-right" class="text-lg"></iconify-icon>
+          </button>
+
+          <button id="submit-btn" class="hidden px-10 h-12 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black tracking-wide transition-all shadow-xl disabled:opacity-30">
+            SUBMIT QUIZ
+          </button>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-24 right-6 z-[100] flex flex-col gap-2"></div>
+  </div>
+
+  <script>
+    const QUESTIONS = [
+      {
+        id: 1,
+        text: "Which traditional Indian jewelry form was historically designed to be reversible, allowing it to be worn on both sides, and why was this technically challenging to craft?",
+        hint: "Think of pieces from Rajasthan or Gujarat where enamel work meets precious stonework."
+      },
+      {
+        id: 2,
+        text: "Why is high-silver content preferred in traditional hand-crafted Indian jewelry compared to machine-alloyed silver?",
+        hint: "Consider the malleability required for intricate chasing and the metal's reaction to 'ghat' (beating)."
+      },
+      {
+        id: 3,
+        text: "What role does lac play in traditional kundan or polki-style jewelry, and how does it affect durability and comfort?",
+        hint: "Lac acts as a structural core. Think about how hollow gold foil would behave without it."
+      },
+      {
+        id: 4,
+        text: "Which Indian region is historically associated with repoussé and chasing techniques in metal jewelry, and what distinguishes these methods?",
+        hint: "Focus on Temple Jewelry traditions and the specific act of pushing metal from the back versus the front."
+      },
+      {
+        id: 5,
+        text: "Natural gemstones often contain inclusions. Why are certain inclusions considered a mark of authenticity rather than a flaw?",
+        hint: "Look into 'Jardin' in emeralds or 'Silk' in rubies as identifiers of natural geological formation."
+      },
+      {
+        id: 6,
+        text: "How does hand-hammering metal alter its internal structure, and why is this important for heirloom jewelry?",
+        hint: "This relates to 'Work Hardening' and the longevity of the piece over generations."
+      },
+      {
+        id: 7,
+        text: "What is the cultural significance of wearing a hasli necklace, and how does its structure differ from modern neckpieces?",
+        hint: "Identify the rigid collar structure compared to the flexible link chains of the modern era."
+      },
+      {
+        id: 8,
+        text: "Why are heritage jewelry pieces often designed with slightly imperfect symmetry, and what does this reveal about their making?",
+        hint: "This is often called 'Wabi-sabi' in a different context; here it signifies the human touch over machine precision."
+      },
+      {
+        id: 9,
+        text: "In traditional Indian jewelry, why was gold often alloyed differently for various regions rather than standardized?",
+        hint: "Different regions preferred specific colors—from pale yellow to deep reddish-gold—based on cultural aesthetics."
+      },
+      {
+        id: 10,
+        text: "What is the difference between surface polish and burnishing, and why is burnishing preferred in handcrafted jewelry?",
+        hint: "Polishing removes material; burnishing compresses it. Think about the resulting 'hard' shine."
+      }
+    ];
+
+    let state = {
+      currentIdx: 0,
+      answers: {},
+      flagged: {},
+      secondsElapsed: 0,
+      theme: localStorage.getItem('heermaya_theme') || 'light'
+    };
+
+    // Load saved state
+    function loadState() {
+      const saved = localStorage.getItem('heermaya_state');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        state = { ...state, ...parsed };
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem('heermaya_state', JSON.stringify(state));
+    }
+
+    function init() {
+      loadState();
+      applyTheme();
+      renderQuestion();
+      renderGrid();
+      startTimer();
+      setupListeners();
+      checkSubmitStatus();
+    }
+
+    function applyTheme() {
+      if (state.theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('theme-icon').setAttribute('icon', 'lucide:sun');
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.getElementById('theme-icon').setAttribute('icon', 'lucide:moon');
+      }
+    }
+
+    function renderQuestion() {
+      const q = QUESTIONS[state.currentIdx];
+      const container = document.getElementById('question-container');
+      
+      // Animation reset
+      container.style.animation = 'none';
+      container.offsetWidth;
+      container.style.animation = 'slideIn 0.4s ease-out forwards';
+
+      document.getElementById('q-badge').textContent = `Question ${state.currentIdx + 1} of 10`;
+      document.getElementById('q-text').textContent = q.text;
+      document.getElementById('q-hint').textContent = q.hint;
+      document.getElementById('q-answer').value = state.answers[state.currentIdx] || '';
+      document.getElementById('q-answer').focus();
+
+      // Flag UI
+      const flagBtn = document.getElementById('flag-btn');
+      const flagIcon = document.getElementById('flag-icon');
+      if (state.flagged[state.currentIdx]) {
+        flagIcon.classList.add('text-orange-500');
+        flagBtn.classList.add('text-orange-500');
+      } else {
+        flagIcon.classList.remove('text-orange-500');
+        flagBtn.classList.remove('text-orange-500');
+      }
+
+      // Button states
+      document.getElementById('prev-btn').disabled = state.currentIdx === 0;
+      if (state.currentIdx === 9) {
+        document.getElementById('next-btn').classList.add('hidden');
+        document.getElementById('submit-btn').classList.remove('hidden');
+      } else {
+        document.getElementById('next-btn').classList.remove('hidden');
+        document.getElementById('submit-btn').classList.add('hidden');
+      }
+
+      checkSubmitStatus();
+      renderGrid();
+    }
+
+    function renderGrid() {
+      const grid = document.getElementById('question-grid');
+      grid.innerHTML = '';
+
+      for (let i = 0; i < 10; i++) {
+        const btn = document.createElement('button');
+        const isCurrent = i === state.currentIdx;
+        const isAnswered = state.answers[i] && state.answers[i].trim().length > 0;
+        const isFlagged = state.flagged[i];
+
+        btn.className = `relative w-10 h-10 rounded-lg text-xs font-bold transition-all border-2 flex items-center justify-center`;
+        
+        if (isCurrent) {
+          btn.classList.add('border-[#d4af37]', 'text-[#d4af37]', 'shadow-lg', 'scale-110');
+        } else if (isAnswered) {
+          btn.classList.add('bg-[#d4af37]', 'border-[#d4af37]', 'text-white');
+        } else {
+          btn.classList.add('border-slate-200', 'dark:border-slate-800', 'text-slate-400');
+        }
+
+        if (isFlagged) {
+          const dot = document.createElement('div');
+          dot.className = 'absolute -top-1 -right-1 w-2.5 h-2.5 bg-orange-500 rounded-full border-2 border-white dark:border-[#0f172a]';
+          btn.appendChild(dot);
+        }
+
+        btn.textContent = i + 1;
+        btn.onclick = () => {
+          state.answers[state.currentIdx] = document.getElementById('q-answer').value;
+          state.currentIdx = i;
+          saveState();
+          renderQuestion();
+        };
+        
+        grid.appendChild(btn);
+      }
+
+      // Update progress
+      const answered = Object.values(state.answers).filter(a => a && a.trim().length > 0).length;
+      const percent = Math.round((answered / 10) * 100);
+      document.getElementById('progress-bar').style.width = `${percent}%`;
+      document.getElementById('progress-text').textContent = `${percent}%`;
+    }
+
+    function startTimer() {
+      setInterval(() => {
+        state.secondsElapsed++;
+        const mins = Math.floor(state.secondsElapsed / 60).toString().padStart(2, '0');
+        const secs = (state.secondsElapsed % 60).toString().padStart(2, '0');
+        document.getElementById('timer').innerHTML = `
+          <iconify-icon icon="lucide:timer" class="text-sm"></iconify-icon>
+          <span>${mins}:${secs}</span>
+        `;
+        saveState();
+      }, 1000);
+    }
+
+    function setupListeners() {
+      document.getElementById('q-answer').addEventListener('blur', (e) => {
+        state.answers[state.currentIdx] = e.target.value;
+        saveState();
+        renderGrid();
+        checkSubmitStatus();
+      });
+
+      document.getElementById('q-answer').addEventListener('input', () => {
+        const dot = document.querySelectorAll('#question-grid button')[state.currentIdx];
+        if (document.getElementById('q-answer').value.trim().length > 0) {
+          dot.classList.add('bg-[#d4af37]', 'border-[#d4af37]', 'text-white');
+          dot.classList.remove('border-slate-200', 'dark:border-slate-800');
+        }
+      });
+
+      document.getElementById('next-btn').onclick = () => {
+        if (state.currentIdx < 9) {
+          state.answers[state.currentIdx] = document.getElementById('q-answer').value;
+          state.currentIdx++;
+          saveState();
+          renderQuestion();
+        }
+      };
+
+      document.getElementById('prev-btn').onclick = () => {
+        if (state.currentIdx > 0) {
+          state.answers[state.currentIdx] = document.getElementById('q-answer').value;
+          state.currentIdx--;
+          saveState();
+          renderQuestion();
+        }
+      };
+
+      document.getElementById('flag-btn').onclick = () => {
+        state.flagged[state.currentIdx] = !state.flagged[state.currentIdx];
+        saveState();
+        showToast(state.flagged[state.currentIdx] ? 'Question flagged for review' : 'Flag removed', 'info');
+        renderQuestion();
+      };
+
+      document.getElementById('theme-toggle').onclick = () => {
+        state.theme = state.theme === 'light' ? 'dark' : 'light';
+        localStorage.setItem('heermaya_theme', state.theme);
+        saveState();
+        applyTheme();
+      };
+
+      document.getElementById('submit-btn').onclick = submitQuiz;
+
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'Enter') {
+          if (state.currentIdx < 9) {
+            document.getElementById('next-btn').click();
+          } else {
+            submitQuiz();
+          }
+        }
+      });
+    }
+
+    function checkSubmitStatus() {
+      const allAnswered = Object.values(state.answers).every(a => a && a.trim().length > 10);
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = !allAnswered;
+    }
+
+    function showToast(msg, type) {
+      const toast = document.createElement('div');
+      const bgColor = type === 'success' ? 'bg-green-500' : 'bg-orange-500';
+      const icon = type === 'success' ? 'lucide:check-circle' : 'lucide:alert-circle';
+      
+      toast.className = `${bgColor} text-white px-6 py-3 rounded-xl shadow-xl flex items-center gap-2 font-bold text-sm animate-in slide-in-from-bottom-4`;
+      toast.innerHTML = `<iconify-icon icon="${icon}"></iconify-icon><span>${msg}</span>`;
+      
+      document.getElementById('toast-container').appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    function submitQuiz() {
+      state.answers[state.currentIdx] = document.getElementById('q-answer').value;
+      
+      if (!Object.values(state.answers).every(a => a && a.trim().length > 10)) {
+        showToast('Please answer all questions thoroughly', 'warning');
+        return;
+      }
+
+      localStorage.removeItem('heermaya_state');
+      
+      document.body.innerHTML = `
+        <div class="min-h-screen bg-[#0f172a] flex items-center justify-center p-6">
+          <div class="max-w-md text-center space-y-8 animate-question">
+            <div class="w-20 h-20 bg-[#d4af37] rounded-full flex items-center justify-center text-white text-4xl mx-auto">
+              <iconify-icon icon="lucide:award"></iconify-icon>
+            </div>
+            <h1 class="serif text-4xl text-white">Mastery Achieved</h1>
+            <p class="text-slate-400">Your insights into Heritage Jewelry have been recorded. Our curators will review your responses shortly.</p>
+            <button onclick="location.reload()" class="w-full py-4 bg-[#d4af37] text-white font-black rounded-xl">
+              RETAKE QUIZ
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Initialize on load
+    window.addEventListener('load', init);
+  </script>
+</body>
+</html>
